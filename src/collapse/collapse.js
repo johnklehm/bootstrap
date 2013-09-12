@@ -14,7 +14,9 @@ angular.module('ui.bootstrap.collapse',['ui.bootstrap.transition'])
     // It appears that  reading offsetWidth makes the browser realise that we have changed the
     // height already :-/
     var x = element[0].offsetWidth;
-    if (isCollapsed) element.addClass('collapse');
+    if (isCollapsed) { 
+      element.addClass('collapse');
+    }
   };
 
   return {
