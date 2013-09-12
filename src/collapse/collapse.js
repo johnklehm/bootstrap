@@ -7,14 +7,14 @@ angular.module('ui.bootstrap.collapse',['ui.bootstrap.transition'])
   // Unfortunately if you do this while the CSS transitions are specified (i.e. in the CSS class
   // "collapse") then you trigger a change to height 0 in between.
   // The fix is to remove the "collapse" CSS class while changing the height back to auto - phew!
-  var fixUpHeight = function(scope, element, height) {
+  var fixUpHeight = function(scope, element, height, isCollapsed) {
     // We remove the collapse CSS class to prevent a transition when we change to height: auto
     element.removeClass('collapse');
     element.css({ height: height });
     // It appears that  reading offsetWidth makes the browser realise that we have changed the
     // height already :-/
     var x = element[0].offsetWidth;
-    element.addClass('collapse');
+    if (isCollapsed) element.addClass('collapse');
   };
 
   return {
@@ -31,9 +31,9 @@ angular.module('ui.bootstrap.collapse',['ui.bootstrap.transition'])
         if (element[0].scrollHeight !== 0) {
           if (!isCollapsed) {
             if (initialAnimSkip) {
-              fixUpHeight(scope, element, element[0].scrollHeight + 'px');
+              fixUpHeight(scope, element, element[0].scrollHeight + 'px', isCollapsed);
             } else {
-              fixUpHeight(scope, element, 'auto');
+              fixUpHeight(scope, element, 'auto', isCollapsed);
             }
           }
         }
@@ -65,7 +65,7 @@ angular.module('ui.bootstrap.collapse',['ui.bootstrap.transition'])
         if (initialAnimSkip) {
           initialAnimSkip = false;
           if ( !isCollapsed ) {
-            fixUpHeight(scope, element, 'auto');
+            fixUpHeight(scope, element, 'auto', isCollapsed);
           }
         } else {
           doTransition({ height : element[0].scrollHeight + 'px' })
@@ -73,7 +73,7 @@ angular.module('ui.bootstrap.collapse',['ui.bootstrap.transition'])
             // This check ensures that we don't accidentally update the height if the user has closed
             // the group while the animation was still running
             if ( !isCollapsed ) {
-              fixUpHeight(scope, element, 'auto');
+              fixUpHeight(scope, element, 'auto', isCollapsed);
             }
           });
         }
@@ -84,9 +84,9 @@ angular.module('ui.bootstrap.collapse',['ui.bootstrap.transition'])
         isCollapsed = true;
         if (initialAnimSkip) {
           initialAnimSkip = false;
-          fixUpHeight(scope, element, 0);
+          fixUpHeight(scope, element, 0, isCollapsed);
         } else {
-          fixUpHeight(scope, element, element[0].scrollHeight + 'px');
+          fixUpHeight(scope, element, element[0].scrollHeight + 'px', isCollapsed);
           doTransition({'height':'0'});
         }
       };
